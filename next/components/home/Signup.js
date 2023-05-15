@@ -13,11 +13,19 @@ function Signup({ handleClick }) {
     });
 
     const [institutionOptions, setInstitutionOptions] = useState([]);
+    const [nationalityOptions, setNationalityOptions] = useState([]);
 
     useEffect(() => {
         fetch('https://www.snorlax.wtf:4000/institutions')
             .then(response => response.json())
             .then(data => setInstitutionOptions(data.message));
+
+        fetch('https://snorlax.wtf:4000/api/nationalities')
+            .then(response => response.json())
+            .then(data => {
+                const citizenships = data.map(nationality => nationality.citizenship);
+                setNationalityOptions(citizenships);
+            });
     }, []);
 
 
@@ -28,7 +36,7 @@ function Signup({ handleClick }) {
 
     const handleSubmitSignUp = async (event) => {
         event.preventDefault();
-        const { firstName, lastName, email, password } = formDataSignUp;
+        const { firstName, lastName, email } = formDataSignUp;
 
         // Check if first name and last name are not empty
         if (!firstName || !lastName) {
@@ -55,6 +63,7 @@ function Signup({ handleClick }) {
                 firstName: '',
                 lastName: '',
                 institution: '',
+                nationality: '',
                 email: '',
                 password: ''
             });
@@ -82,10 +91,16 @@ function Signup({ handleClick }) {
                     <input type="text" className="form-control mb-2" placeholder="First Name" name="firstName" value={formDataSignUp.firstName} onChange={handleChangeSignUp} />
                     <input type="text" className="form-control mb-2" placeholder="Last Name" name="lastName" value={formDataSignUp.lastName} onChange={handleChangeSignUp} />
                 </div>
-                <select className="form-control mb-3" name="institution" value={formDataSignUp.institution} onChange={handleChangeSignUp}>
+                <select className="form-control mb-2" name="institution" value={formDataSignUp.institution} onChange={handleChangeSignUp}>
                     <option value="unspecified">Institution</option>
                     {institutionOptions.map(institution => (
                         <option key={institution._id} value={institution._id}>{institution.name}</option>
+                    ))}
+                </select>
+                <select className="form-control mb-3" name="nationality" value={formDataSignUp.nationality} onChange={handleChangeSignUp}>
+                    <option value="unspecified">Nationality</option>
+                    {nationalityOptions.map((nationality, index) => (
+                        <option key={`nationality-${index}`} value={nationality}>{nationality}</option>
                     ))}
                 </select>
 

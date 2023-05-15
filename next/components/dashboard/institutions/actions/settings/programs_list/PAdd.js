@@ -12,7 +12,7 @@ function PAdd(props) {
         const input = event.target.value;
         setInputValue(input);
         const filtered = allPrograms.filter(
-            (program) => program.name.toLowerCase().startsWith(input.toLowerCase()) && !alreadyAddedPrograms.some((addedProgram) => addedProgram.programId === program.programId)
+            (program) => (`${program.offerer} ${program.title}`).toLowerCase().includes(input.toLowerCase()) && (!alreadyAddedPrograms || !alreadyAddedPrograms.some((addedProgram) => addedProgram.programId === program.programId))
         );
         setFilteredPrograms(filtered);
     };
@@ -73,7 +73,7 @@ function PAdd(props) {
                     <Dropdown.Menu>
                         {filteredPrograms.map((program) => (
                             <Dropdown.Item key={program.programId} eventKey={program.programId} onClick={() => handleSelect(program)}>
-                                {program.name}
+                                {program.offerer} - {program.title}
                             </Dropdown.Item>
                         ))}
                     </Dropdown.Menu>

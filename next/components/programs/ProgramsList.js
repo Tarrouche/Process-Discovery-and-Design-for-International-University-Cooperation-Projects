@@ -1,9 +1,9 @@
-import ProgramCard from '../cards/PCard';
+import ProgramCard from '../cards/program/PCard';
 import { PageContext } from './Programs';
 import React, { useContext } from 'react';
 import { Pagination } from 'react-bootstrap';
 
-const ProgramsList = ({ filteredPrograms }) => {
+const ProgramsList = ({ filteredPrograms, applications }) => {
     const { pageNumber, setPageNumber } = useContext(PageContext);
     const programsPerPage = 5;
 
@@ -25,18 +25,11 @@ const ProgramsList = ({ filteredPrograms }) => {
 
         <>
             <div className="accordion bg-white" id="accordionExample">
-                {currentPrograms.map(({ programId, name, location, logo, fundingRequirements, fundingAllowances }, index) => (
+                {currentPrograms.map((program, index) => (
                     <ProgramCard
                         key={`prog-${index + pageNumber * programsPerPage}`}
-                        programId={programId}
-                        title={name}
-                        logo={logo}
-                        location={location}
-                        parameters={[{ name: 'Required works hours', value: '8h per week' },
-                        { name: 'Registration deadline', value: '20.04.2023' }]}
-                        benefits={['Funded']}
-                        fundingRequirements={fundingRequirements}
-                        fundingAllowances={fundingAllowances}
+                        program={program}
+                        applications={applications}
                     />
                 ))}
             </div>

@@ -1,0 +1,1092 @@
+<properties xmlns="http://cpee.org/ns/properties/2.0"><dataelements>
+    <userId>0xdead</userId>
+    <programId>0xdead</programId>
+  </dataelements><endpoints>
+    <timeout>http://cpee.org/services/timeout.php</timeout>
+    <subprocess>https-post://cpee.org/flow/start/url/</subprocess>
+    <send>https-post://cpee.org/ing/correlators/message/send/</send>
+    <receive>https-post://cpee.org/ing/correlators/message/receive/</receive>
+    <user>https-post://cpee.org/services/timeout-user.php</user>
+    <auto>https-post://cpee.org/services/timeout-auto.php</auto>
+    <application_initiation>https-post://snorlax.wtf:4000/api/cpee/</application_initiation>
+    <supervisor_approval>https-post://snorlax.wtf:4000/api/cpee/supervisor_approval</supervisor_approval>
+    <institution_approval>https-post://snorlax.wtf:4000/api/cpee/institution_approval</institution_approval>
+    <mobility_agreement>https-post://snorlax.wtf:4000/api/cpee/mobility_agreement</mobility_agreement>
+    <check_visa>https-post://snorlax.wtf:4000/api/cpee/check_visa</check_visa>
+    <prepare_application>https-post://snorlax.wtf:4000/api/cpee/prepare_application</prepare_application>
+    <apply_grant>https-post://snorlax.wtf:4000/api/cpee/apply_grant</apply_grant>
+    <wait_grant>https-post://snorlax.wtf:4000/api/cpee/wait_grant</wait_grant>
+    <confirm_participation>https-post://snorlax.wtf:4000/api/cpee/confirm_participation</confirm_participation>
+    <start_funding>https-post://snorlax.wtf:4000/api/cpee/start_funding</start_funding>
+    <change_period>https-post://snorlax.wtf:4000/api/cpee/change_period</change_period>
+    <end_funding>https-post://snorlax.wtf:4000/api/cpee/end_funding</end_funding>
+    <final_report>https-post://snorlax.wtf:4000/api/cpee/final_report</final_report>
+    <final_presentation>https-post://snorlax.wtf:4000/api/cpee/final_presentation</final_presentation>
+    <submit_report>https-post://snorlax.wtf:4000/api/cpee/submit_report</submit_report>
+    <apply_module>https-post://snorlax.wtf:4000/api/cpee/apply_module</apply_module>
+    <stop_program>https-post://snorlax.wtf:4000/api/cpee/stop_program</stop_program>
+  </endpoints><attributes>
+    <guarded>none</guarded>
+    <info>v1</info>
+    <guarded_id/>
+    <modeltype>CPEE</modeltype>
+    <theme>preset</theme>
+  </attributes><description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a1" endpoint="application_initiation">
+        <parameters>
+          <label>Getting application initial data</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.differentInstitution = result['differentInstitution']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <choose mode="exclusive">
+        <alternative condition="data.differentInstitution == true">
+          <_probability>
+            <_probability_min/>
+            <_probability_max/>
+            <_probability_avg/>
+          </_probability>
+          <call id="a2" endpoint="supervisor_approval">
+            <parameters>
+              <label>Obtain general approval from supervisor</label>
+              <arguments>
+                <applicant>!data.userId</applicant>
+                <program>!data.programId</program>
+              </arguments>
+            </parameters>
+            <code>
+              <prepare/>
+              <finalize output="result">data.supervisorApproved = result['approval']</finalize>
+              <update output="result"/>
+              <rescue output="result"/>
+            </code>
+            <annotations>
+              <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+              </_timing>
+              <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+              </_shifting>
+              <_context_data_analysis>
+                <probes/>
+                <ips/>
+              </_context_data_analysis>
+              <report>
+                <url/>
+              </report>
+              <_notes>
+                <_notes_general/>
+              </_notes>
+            </annotations>
+            <documentation>
+              <input/>
+              <output/>
+              <implementation>
+                <description/>
+              </implementation>
+              <code>
+                <description/>
+              </code>
+            </documentation>
+          </call>
+          <choose mode="exclusive">
+            <alternative condition="data.supervisorApproved == true">
+              <manipulate id="a3" label="Initially no institution contacted">data.institutionApproved = false</manipulate>
+              <loop mode="pre_test" condition="data.institutionApproved == false">
+                <call id="a4" endpoint="institution_approval">
+                  <parameters>
+                    <label>Contact the chosen institution #Either own choice or from calls?</label>
+                    <arguments>
+                      <applicant>!data.userId</applicant>
+                      <program>!data.programId</program>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.institutionApproved = result['approval']</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+              </loop>
+              <call id="a5" endpoint="mobility_agreement">
+                <parameters>
+                  <label>Mobility agreement settlement</label>
+                  <arguments>
+                    <applicant>!data.userId</applicant>
+                    <program>!data.programId</program>
+                  </arguments>
+                </parameters>
+                <code>
+                  <prepare/>
+                  <finalize output="result">data.mobilityStart = result['mobilityStart']
+data.mobilityEnd = result['mobilityEnd']</finalize>
+                  <update output="result"/>
+                  <rescue output="result"/>
+                </code>
+                <annotations>
+                  <_timing>
+                    <_timing_weight/>
+                    <_timing_avg/>
+                    <explanations/>
+                  </_timing>
+                  <_shifting>
+                    <_shifting_type>Duration</_shifting_type>
+                  </_shifting>
+                  <_context_data_analysis>
+                    <probes/>
+                    <ips/>
+                  </_context_data_analysis>
+                  <report>
+                    <url/>
+                  </report>
+                  <_notes>
+                    <_notes_general/>
+                  </_notes>
+                </annotations>
+                <documentation>
+                  <input/>
+                  <output/>
+                  <implementation>
+                    <description/>
+                  </implementation>
+                  <code>
+                    <description/>
+                  </code>
+                </documentation>
+              </call>
+              <call id="a6" endpoint="check_visa">
+                <parameters>
+                  <label>Visa #TODISCUSS</label>
+                  <arguments>
+                    <applicant>!data.userId</applicant>
+                    <program>!data.programId</program>
+                  </arguments>
+                </parameters>
+                <code>
+                  <prepare/>
+                  <finalize output="result">data.visaChecked = result['visa']</finalize>
+                  <update output="result"/>
+                  <rescue output="result"/>
+                </code>
+                <annotations>
+                  <_timing>
+                    <_timing_weight/>
+                    <_timing_avg/>
+                    <explanations/>
+                  </_timing>
+                  <_shifting>
+                    <_shifting_type>Duration</_shifting_type>
+                  </_shifting>
+                  <_context_data_analysis>
+                    <probes/>
+                    <ips/>
+                  </_context_data_analysis>
+                  <report>
+                    <url/>
+                  </report>
+                  <_notes>
+                    <_notes_general/>
+                  </_notes>
+                </annotations>
+                <documentation>
+                  <input/>
+                  <output/>
+                  <implementation>
+                    <description/>
+                  </implementation>
+                  <code>
+                    <description/>
+                  </code>
+                </documentation>
+              </call>
+              <_probability>
+                <_probability_min/>
+                <_probability_max/>
+                <_probability_avg/>
+              </_probability>
+            </alternative>
+            <otherwise>
+              <terminate/>
+            </otherwise>
+          </choose>
+        </alternative>
+        <otherwise/>
+      </choose>
+      <call id="a7" endpoint="prepare_application">
+        <parameters>
+          <label>Prepare application documents</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.documentsPrepared = result['documents']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <call id="a8" endpoint="apply_grant">
+        <parameters>
+          <label>Apply for the grant</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.grantApplied = result['applied']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <call id="a9" endpoint="wait_grant">
+        <parameters>
+          <label>Wait for response</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.grantApproved = result['approval']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <choose mode="exclusive">
+        <alternative condition="data.grantApproved == true">
+          <_probability>
+            <_probability_min/>
+            <_probability_max/>
+            <_probability_avg/>
+          </_probability>
+          <call id="a10" endpoint="confirm_participation">
+            <parameters>
+              <label>Confirm the participation</label>
+              <arguments>
+                <applicant>!data.userId</applicant>
+                <program>!data.programId</program>
+              </arguments>
+            </parameters>
+            <code>
+              <prepare/>
+              <finalize output="result">data.fundingStart = result['fundingStart']
+data.fundingEnd = result['fundingEnd']</finalize>
+              <update output="result"/>
+              <rescue output="result"/>
+            </code>
+            <annotations>
+              <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+              </_timing>
+              <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+              </_shifting>
+              <_context_data_analysis>
+                <probes/>
+                <ips/>
+              </_context_data_analysis>
+              <report>
+                <url/>
+              </report>
+              <_notes>
+                <_notes_general/>
+              </_notes>
+            </annotations>
+            <documentation>
+              <input/>
+              <output/>
+              <implementation>
+                <description/>
+              </implementation>
+              <code>
+                <description/>
+              </code>
+            </documentation>
+          </call>
+        </alternative>
+        <otherwise>
+          <terminate/>
+        </otherwise>
+      </choose>
+      <call id="a11" endpoint="timeout">
+        <parameters>
+          <label>Wait for funding #From now to funding period start #Do we store processes entirely here?</label>
+          <method>:post</method>
+          <arguments>
+            <timeout>5</timeout>
+          </arguments>
+        </parameters>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+        </documentation>
+      </call>
+      <call id="a12" endpoint="start_funding">
+        <parameters>
+          <label>Start of funding period</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.modulesAvailable = !result['applyModule']
+data.reportsRequired = !result['submitReport']
+data.actions = result</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <parallel wait="1" cancel="last">
+        <parallel_branch>
+          <call id="a14" endpoint="stop_program">
+            <parameters>
+              <label/>
+              <arguments>
+                <applicant>!data.userId</applicant>
+                <program>!data.programId</program>
+              </arguments>
+            </parameters>
+            <code>
+              <prepare/>
+              <finalize output="result">data.actions['stopProgram'] = false</finalize>
+              <update output="result">data.actions['stopProgram'] = true</update>
+              <rescue output="result"/>
+            </code>
+            <annotations>
+              <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+              </_timing>
+              <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+              </_shifting>
+              <_context_data_analysis>
+                <probes/>
+                <ips/>
+              </_context_data_analysis>
+              <report>
+                <url/>
+              </report>
+              <_notes>
+                <_notes_general/>
+              </_notes>
+            </annotations>
+            <documentation>
+              <input/>
+              <output/>
+              <implementation>
+                <description/>
+              </implementation>
+              <code>
+                <description/>
+              </code>
+            </documentation>
+          </call>
+        </parallel_branch>
+        <parallel_branch>
+          <parallel wait="-1" cancel="last">
+            <parallel_branch pass="" local="">
+              <loop mode="pre_test" condition="!data.actions['stopProgram']">
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+                <call id="a26" endpoint="timeout">
+                  <parameters>
+                    <label/>
+                    <method>:post</method>
+                    <arguments>
+                      <timeout>1</timeout>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result"/>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+              </loop>
+              <loop mode="pre_test" condition="true">
+                <call id="a13" endpoint="change_period">
+                  <parameters>
+                    <label/>
+                    <arguments>
+                      <applicant>!data.userId</applicant>
+                      <program>!data.programId</program>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.actions['changePeriod'] = false</finalize>
+                    <update output="result">data.actions['changePeriod'] = true</update>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+              </loop>
+            </parallel_branch>
+            <parallel_branch pass="" local="">
+              <choose mode="exclusive">
+                <alternative condition="data.modulesAvailable == true">
+                  <manipulate id="a27" label="">data.modulesCounter = 0</manipulate>
+                  <loop mode="pre_test" condition="!data.actions['changePeriod']">
+                    <_probability>
+                      <_probability_min/>
+                      <_probability_max/>
+                      <_probability_avg/>
+                    </_probability>
+                    <call id="a16" endpoint="timeout">
+                      <parameters>
+                        <label/>
+                        <method>:post</method>
+                        <arguments>
+                          <timeout>1</timeout>
+                        </arguments>
+                      </parameters>
+                      <annotations>
+                        <_timing>
+                          <_timing_weight/>
+                          <_timing_avg/>
+                          <explanations/>
+                        </_timing>
+                        <_shifting>
+                          <_shifting_type>Duration</_shifting_type>
+                        </_shifting>
+                        <_context_data_analysis>
+                          <probes/>
+                          <ips/>
+                        </_context_data_analysis>
+                        <report>
+                          <url/>
+                        </report>
+                        <_notes>
+                          <_notes_general/>
+                        </_notes>
+                      </annotations>
+                      <documentation>
+                        <input/>
+                        <output/>
+                        <implementation>
+                          <description/>
+                        </implementation>
+                      </documentation>
+                    </call>
+                  </loop>
+                  <loop mode="pre_test" condition="true">
+                    <_probability>
+                      <_probability_min/>
+                      <_probability_max/>
+                      <_probability_avg/>
+                    </_probability>
+                    <call id="a29" endpoint="apply_module">
+                      <parameters>
+                        <label/>
+                        <arguments>
+                          <applicant>!data.userId</applicant>
+                          <program>!data.programId</program>
+                        </arguments>
+                      </parameters>
+                      <code>
+                        <prepare/>
+                        <finalize output="result">data.actions['applyModule'] = false</finalize>
+                        <update output="result">data.actions['applyModule'] = true</update>
+                        <rescue output="result"/>
+                      </code>
+                      <annotations>
+                        <_timing>
+                          <_timing_weight/>
+                          <_timing_avg/>
+                          <explanations/>
+                        </_timing>
+                        <_shifting>
+                          <_shifting_type>Duration</_shifting_type>
+                        </_shifting>
+                        <_context_data_analysis>
+                          <probes/>
+                          <ips/>
+                        </_context_data_analysis>
+                        <report>
+                          <url/>
+                        </report>
+                        <_notes>
+                          <_notes_general/>
+                        </_notes>
+                      </annotations>
+                      <documentation>
+                        <input/>
+                        <output/>
+                        <implementation>
+                          <description/>
+                        </implementation>
+                        <code>
+                          <description/>
+                        </code>
+                      </documentation>
+                    </call>
+                  </loop>
+                  <_probability>
+                    <_probability_min/>
+                    <_probability_max/>
+                    <_probability_avg/>
+                  </_probability>
+                </alternative>
+                <otherwise/>
+              </choose>
+            </parallel_branch>
+            <parallel_branch>
+              <choose mode="exclusive">
+                <alternative condition="data.reportsRequired == true">
+                  <manipulate id="a28" label="">data.reportsCounter = 0</manipulate>
+                  <loop mode="pre_test" condition="(!data.modulesAvailable &amp;&amp; !data.actions['changePeriod']) || !data.actions['applyModule']">
+                    <_probability>
+                      <_probability_min/>
+                      <_probability_max/>
+                      <_probability_avg/>
+                    </_probability>
+                    <call id="a15" endpoint="timeout">
+                      <parameters>
+                        <label/>
+                        <method>:post</method>
+                        <arguments>
+                          <timeout>1</timeout>
+                        </arguments>
+                      </parameters>
+                      <annotations>
+                        <_timing>
+                          <_timing_weight/>
+                          <_timing_avg/>
+                          <explanations/>
+                        </_timing>
+                        <_shifting>
+                          <_shifting_type>Duration</_shifting_type>
+                        </_shifting>
+                        <_context_data_analysis>
+                          <probes/>
+                          <ips/>
+                        </_context_data_analysis>
+                        <report>
+                          <url/>
+                        </report>
+                        <_notes>
+                          <_notes_general/>
+                        </_notes>
+                      </annotations>
+                      <documentation>
+                        <input/>
+                        <output/>
+                        <implementation>
+                          <description/>
+                        </implementation>
+                      </documentation>
+                    </call>
+                  </loop>
+                  <loop mode="pre_test" condition="true">
+                    <_probability>
+                      <_probability_min/>
+                      <_probability_max/>
+                      <_probability_avg/>
+                    </_probability>
+                    <call id="a30" endpoint="submit_report">
+                      <parameters>
+                        <label/>
+                        <arguments>
+                          <applicant>!data.userId</applicant>
+                          <program>!data.programId</program>
+                        </arguments>
+                      </parameters>
+                      <code>
+                        <prepare/>
+                        <finalize output="result">data.actions['submitReport'] = false</finalize>
+                        <update output="result">data.actions['submitReport'] = true</update>
+                        <rescue output="result"/>
+                      </code>
+                      <annotations>
+                        <_timing>
+                          <_timing_weight/>
+                          <_timing_avg/>
+                          <explanations/>
+                        </_timing>
+                        <_shifting>
+                          <_shifting_type>Duration</_shifting_type>
+                        </_shifting>
+                        <_context_data_analysis>
+                          <probes/>
+                          <ips/>
+                        </_context_data_analysis>
+                        <report>
+                          <url/>
+                        </report>
+                        <_notes>
+                          <_notes_general/>
+                        </_notes>
+                      </annotations>
+                      <documentation>
+                        <input/>
+                        <output/>
+                        <implementation>
+                          <description/>
+                        </implementation>
+                        <code>
+                          <description/>
+                        </code>
+                      </documentation>
+                    </call>
+                  </loop>
+                  <_probability>
+                    <_probability_min/>
+                    <_probability_max/>
+                    <_probability_avg/>
+                  </_probability>
+                </alternative>
+                <otherwise/>
+              </choose>
+            </parallel_branch>
+          </parallel>
+        </parallel_branch>
+      </parallel>
+      <call id="a18" endpoint="end_funding">
+        <parameters>
+          <label>End of funding period</label>
+          <arguments>
+            <applicant>!data.userId</applicant>
+            <program>!data.programId</program>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.finalReport = result['finalReport']
+data.finalPresentation = result['finalPresentation']</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <parallel wait="-1" cancel="last">
+        <parallel_branch pass="" local="">
+          <choose mode="exclusive">
+            <alternative condition="data.finalReport == true">
+              <call id="a19" endpoint="final_report">
+                <parameters>
+                  <label>Submit final report</label>
+                  <arguments>
+                    <applicant>!data.userId</applicant>
+                    <program>!data.programId</program>
+                  </arguments>
+                </parameters>
+                <annotations>
+                  <_timing>
+                    <_timing_weight/>
+                    <_timing_avg/>
+                    <explanations/>
+                  </_timing>
+                  <_shifting>
+                    <_shifting_type>Duration</_shifting_type>
+                  </_shifting>
+                  <_context_data_analysis>
+                    <probes/>
+                    <ips/>
+                  </_context_data_analysis>
+                  <report>
+                    <url/>
+                  </report>
+                  <_notes>
+                    <_notes_general/>
+                  </_notes>
+                </annotations>
+                <documentation>
+                  <input/>
+                  <output/>
+                  <implementation>
+                    <description/>
+                  </implementation>
+                </documentation>
+              </call>
+              <_probability>
+                <_probability_min/>
+                <_probability_max/>
+                <_probability_avg/>
+              </_probability>
+            </alternative>
+            <otherwise/>
+          </choose>
+        </parallel_branch>
+        <parallel_branch pass="" local="">
+          <choose mode="exclusive">
+            <alternative condition="data.finalPresentation == true">
+              <call id="a21" endpoint="final_presentation">
+                <parameters>
+                  <label>Hold presentation</label>
+                  <arguments>
+                    <applicant>!data.userId</applicant>
+                    <program>!data.programId</program>
+                  </arguments>
+                </parameters>
+                <annotations>
+                  <_timing>
+                    <_timing_weight/>
+                    <_timing_avg/>
+                    <explanations/>
+                  </_timing>
+                  <_shifting>
+                    <_shifting_type>Duration</_shifting_type>
+                  </_shifting>
+                  <_context_data_analysis>
+                    <probes/>
+                    <ips/>
+                  </_context_data_analysis>
+                  <report>
+                    <url/>
+                  </report>
+                  <_notes>
+                    <_notes_general/>
+                  </_notes>
+                </annotations>
+                <documentation>
+                  <input/>
+                  <output/>
+                  <implementation>
+                    <description/>
+                  </implementation>
+                </documentation>
+              </call>
+              <_probability>
+                <_probability_min/>
+                <_probability_max/>
+                <_probability_avg/>
+              </_probability>
+            </alternative>
+            <otherwise/>
+          </choose>
+        </parallel_branch>
+      </parallel>
+    </description>
+  </description><transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation></properties>

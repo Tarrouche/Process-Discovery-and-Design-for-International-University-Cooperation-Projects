@@ -3,6 +3,7 @@ import { AppPropsType } from 'next/dist/shared/lib/utils'
 import "bootstrap/dist/css/bootstrap.min.css";
 import Nav from '../components/home/Nav';
 import '../styles/globals.css'
+import '../styles/ProcessTimeline.css';
 
 import { createContext, useState } from 'react';
 

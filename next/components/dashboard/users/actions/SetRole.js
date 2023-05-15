@@ -1,5 +1,5 @@
 import { Modal, Button, Form } from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -17,13 +17,11 @@ const RoleModal = ({ id, email, role, allowedRoles, onEdit }) => {
 
     }
 
-
-
     return (
         <span className="mx-2">
-            <button onClick={handleShow} style={{ border: 'none', background: 'none', color: 'inherit' }}>
+            <Button onClick={handleShow} style={{ border: 'none', background: 'none', color: 'inherit' }}>
                 <FontAwesomeIcon icon={faEdit} />
-            </button>
+            </Button>
             <Modal size="lg" show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title id="modal">Edit User</Modal.Title>

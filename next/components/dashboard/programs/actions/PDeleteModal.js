@@ -1,4 +1,4 @@
-import { Modal, ModalHeader, ModalDialog, ModalTitle, ModalBody, ModalFooter } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import React, { useState } from 'react';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,9 +18,9 @@ const PDeleteModal = ({ id, name, onDelete }) => {
 
     return (
         <>
-            <button onClick={openModal} style={{ border: 'none', background: 'none', color: 'inherit' }}>
+            <Button onClick={openModal} style={{ border: 'none', background: 'none', color: 'inherit' }}>
                 <FontAwesomeIcon icon={faTrash} />
-            </button>
+            </Button>
             <Modal size="lg" show={bookingModal} onHide={() => setBookingModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title id="modal">Modal</Modal.Title>
@@ -29,8 +29,13 @@ const PDeleteModal = ({ id, name, onDelete }) => {
                     <p>This action is irreversible. Are you sure you want to delete {name}?</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="button" className="btn btn-secondary" onClick={() => setBookingModal(false)}>Cancel</button>
-                    <button type="button" className="btn btn-primary" onClick={handleDelete}>Delete</button>
+                    <Button variant="white" style={{ borderColor: "var(--bs-modal-border-color)" }}
+                        onClick={() => setBookingModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="secondary" type="submit" onClick={handleDelete}>
+                        Delete
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </>

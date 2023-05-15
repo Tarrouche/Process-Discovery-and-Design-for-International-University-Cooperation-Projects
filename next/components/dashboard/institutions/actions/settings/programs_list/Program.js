@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import ProgramDetails from './ProgramDetails';
 
-function Program(props) {
-    const { program } = props;
+function Program({ program, onEditProgram, onFileUpload, onDeleteFile }) {
     const [programData, setProgramData] = useState({});
-
     useEffect(() => {
         let id = program.programId;
-        fetch(`https://93.90.203.127:4000/api/program/${id}`)
+        fetch(`https://www.snorlax.wtf:4000/api/program/${id}`)
             .then((response) => response.json())
             .then((data) => {
                 setProgramData(data);
@@ -23,13 +21,17 @@ function Program(props) {
         setIsOpen(!isOpen);
     };
 
-    return programData && programData.hasOwnProperty('name') ? (
+    return programData && programData.hasOwnProperty('title') ? (
         <ProgramDetails
             key={program.programId}
             programData={programData}
-            program={program}
+            application={program}
             isOpen={isOpen}
             toggleOpen={toggleOpen}
+            onEditProgram={onEditProgram}
+            onFileUpload={onFileUpload}
+            onDeleteFile={onDeleteFile}
+
         />
     ) : (
         <div key={program.programId}>Loading program data...</div>

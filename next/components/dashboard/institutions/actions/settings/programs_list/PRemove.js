@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignInAlt, faSignOutAlt, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
 import { Form, Dropdown } from 'react-bootstrap';
 
 function PRemove(props) {
@@ -34,7 +34,7 @@ function PRemove(props) {
                 <Dropdown.Menu>
                     {filteredPrograms.map((program) => (
                         <Dropdown.Item key={program.programId} eventKey={program.programId} onClick={() => handleSelect(program)}>
-                            {program.name}
+                            {program.offerer} - {program.title}
                         </Dropdown.Item>
                     ))}
                 </Dropdown.Menu>

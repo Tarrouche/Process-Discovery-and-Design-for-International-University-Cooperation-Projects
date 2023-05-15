@@ -8,10 +8,30 @@ body {
   border-color: #e1e5ea !important;
 }
 
+.custom-padding-left-0 {
+  padding-left: 0;
+}
+
+.custom-margin-right-5 {
+  margin-right: 5px;
+}
+
+.mirror-x {
+  transform: rotate(0deg) rotateX(180deg);
+}
+
+
 a {
   color: #6c757d;
 }
 
+.accordion-button:not(.collapsed) {
+  color: black;
+}
+
+.accordion-item {
+  color: black;
+}
 
 .navbar-brand {
   margin-left: 25px;
@@ -167,8 +187,6 @@ p.mediumText {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  padding: 10px;
   background-color: #fff;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
@@ -204,7 +222,7 @@ p.mediumText {
 }
 
 .program-more-details {
-  padding: 10px;
+
   border: 1px solid #d9d9d9;
   border-top: none;
   border-radius: 0 0 4px 4px;

@@ -5,69 +5,17 @@ import { createContext, useState } from 'react';
 
 export const FilterContext = createContext();
 
-export default function Programs({ programs, institutionsNames }) {
+export default function Programs({ programs, institutionsNames, countries }) {
     const [filterCriteria, setFilters] = useState({
         typesChecked: false,
+        transferChecked: false,
         filters: {
             typeOfProgram: { Teaching: false, Research: false },
-            location: {
-                "International": {
-                    "set": true,
-                    "locations": {
-                        "Africa": {
-                            "set": true,
-                            "locations": {
-                                "North Africa": { set: false },
-                                "West Africa": { set: false },
-                                "Central Africa": { set: false },
-                                "East Africa": { set: false },
-                                "Southern Africa": { set: false }
-                            }
-                        },
-                        "Asia": {
-                            "set": true,
-                            "locations": {
-                                "Central Asia": { set: false },
-                                "East Asia": { set: false },
-                                "South Asia": { set: false },
-                                "Southeast Asia": { set: false },
-                                "West Asia": { set: false }
-                            }
-                        },
-                        "Australia": {
-                            "set": true,
-                            "locations": {
-                                "Australia": { set: false },
-                                "New Zealand": { set: false }
-                            }
-                        },
-                        "Europe": {
-                            "set": true,
-                            "locations": {
-                                "Eastern Europe": { set: false },
-                                "Northern Europe": { set: false },
-                                "Southern Europe": { set: false },
-                                "Western Europe": { set: false }
-                            }
-                        },
-                        "North America": {
-                            "set": true,
-                            "locations": {
-                                "Canada": { set: false },
-                                "Mexico": { set: false },
-                                "USA": { set: false }
-                            }
-                        },
-                        "South America": {
-                            "set": true,
-                            "locations": {
-                                "Central America": { set: false },
-                                "South America": { set: false }
-                            }
-                        }
-                    }
-                }
-            },
+            transfer: { Possible: false, Required: false, 'Not required': false },
+            application: { Open: false, Closed: false },
+            position: { PhD: false, PostDoc: false, Professorship: false },
+            from: [],
+            to: [],
             partnerInstitutions: []
         }
     });
@@ -84,11 +32,13 @@ export default function Programs({ programs, institutionsNames }) {
                 <div className="row double-cols">
 
                     < div className={showFilters ? 'd-none d-sm-none d-md-none d-lg-block col-5 col-sm-4 col-md-3 col-lg-3 sideBar shadow-box' : 'd-none'}>
-                        <FilterSideBar institutionsNames={institutionsNames} />
+                        <FilterSideBar institutionsNames={institutionsNames} countries={countries} />
                     </div>
                     <div className="col">
                         <Progs
                             programs={programs}
+                            countries={countries}
+                            institutionsNames={institutionsNames}
                         />
                     </div>
                 </div>
@@ -98,14 +48,41 @@ export default function Programs({ programs, institutionsNames }) {
 }
 
 export async function getStaticProps() {
-    const programsRes = await fetch('http://127.0.0.1:4000/programs');
-    const programs = (await programsRes.json()).message;
-    const institutionsRes = await fetch('http://127.0.0.1:4000/api/institutions/names');
-    const institutionsNames = (await institutionsRes.json()).message;
+    const [programsRes, institutionsRes, countriesRes] = await Promise.all([
+        fetch('http://127.0.0.1:4000/api/program', {
+            credentials: 'include'
+        }),
+        fetch('http://127.0.0.1:4000/api/institutions/names', {
+            credentials: 'include'
+        }),
+
+        fetch('http://127.0.0.1:4000/api/countries', {
+            credentials: 'include'
+        }),
+    ]);
+
+    const programsData = (await programsRes.json()).message;
+    if (programsRes.status !== 200) {
+        console.log('Error getting user applications');
+    }
+
+    const institutionsData = (await institutionsRes.json()).message;
+    if (institutionsRes.status !== 200) {
+        console.log('Error getting programs applications');
+    }
+
+    const countriesData = await countriesRes.json();
+    if (countriesRes.status !== 200) {
+        console.log('Error getting user applications');
+    }
+    const countries = countriesData.map((obj) => obj.country);
+
+
     return {
         props: {
-            programs,
-            institutionsNames,
+            programs: programsData,
+            institutionsNames: institutionsData,
+            countries: countries
         },
     };
 }

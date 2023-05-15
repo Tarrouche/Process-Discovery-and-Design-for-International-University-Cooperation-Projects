@@ -48,8 +48,7 @@ const Nav = () => {
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li><Link className="dropdown-item" href="#">Account</Link></li>
-                {user.role == 'Admin' && <li><Link className="dropdown-item" href="/dashboard">Dashboard</Link></li>}
-                {user.role == 'Applicant' && <li><Link className="dropdown-item" href="/applications">Applications</Link></li>}
+                {['Admin', 'Responsible'].includes(user.role) && <li><Link className="dropdown-item" href="/dashboard">Dashboard</Link></li>}
                 <li>
                   <form action="https://snorlax.wtf:4000/api/user/logout" method="POST">
                     <button type="submit" className="dropdown-item">Logout</button>

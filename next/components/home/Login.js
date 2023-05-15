@@ -33,7 +33,6 @@ function Login({ error, handleClick }) {
         } else {
             setInvalidCredentials(result.message);
         }
-        console.log(result)
 
     };
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, Col, Row, Button, Accordion } from 'react-bootstrap';
+import React from 'react';
+import { Card, Col, Row } from 'react-bootstrap';
 import Link from 'next/link';
 
 
@@ -23,13 +23,13 @@ const ICard = ({ institutionId, title, logo, location, programs }) => {
                             <Card.Text className="text-muted">{location}</Card.Text>
                             <div style={{ color: 'black' }} className="flex-grow-1 d-flex justify-content-between flex-column">
                                 <div>
-                                    Hello ser
+                                    -- Additional information could be displayed here --
                                 </div>
                                 <div>
                                     {programs && programs.map((program, index) => (
-                                        <div key={`prog-${index}`}> <span className="badge rounded-pill bg-primary">
-                                            {program.programId}
-                                        </span></div>
+                                        <span key={`prog-${index}`} className="badge rounded-pill bg-primary custom-margin-right-5">
+                                            {program.offerer} - {program.title}
+                                        </span>
 
                                     ))}
                                 </div>

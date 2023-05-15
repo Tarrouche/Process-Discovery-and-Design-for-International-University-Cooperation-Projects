@@ -5,7 +5,6 @@ const fs = require("fs");
 const http = require('http');
 const path = require('path');
 
-process.env.NODE_EXTRA_CA_CERTS = path.join(__dirname, 'certs', 'ca-certificate.crt');
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });

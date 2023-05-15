@@ -5,14 +5,14 @@ import PRemove from './PRemove';
 
 
 
-function PList({ programs, allPrograms, updInstitution, setInstitution }) {
+function PList({ programs, allPrograms, updInstitution, setInstitution, onFileUpload, onDeleteFile }) {
 
     const handleAddProgram = (program, programParameters) => {
         setInstitution({
             ...updInstitution,
             programs: [
-                ...updInstitution.programs,
-                { programId: program.programId, name: program.name, location: program.location, in: programParameters.in, out: programParameters.out }
+                ...updInstitution.programs || [],
+                { programId: program.programId, offerer: program.offerer, title: program.title, name: updInstitution.name, location: program.location, in: programParameters.in, out: programParameters.out }
             ]
         });
     };
@@ -24,15 +24,38 @@ function PList({ programs, allPrograms, updInstitution, setInstitution }) {
             programs: updatedPrograms
         });
     };
+
+    const handleEditProgram = (program) => {
+        const updatedPrograms = updInstitution.programs.map(p => {
+            if (p.programId === program.programId) {
+                return program;
+            }
+            return p;
+        });
+        setInstitution({
+            ...updInstitution,
+            programs: updatedPrograms
+        });
+    };
+
     return (
         <>
-            <Form.Group controlId="formBasicPrograms">
-                {programs.length > 0 && <Form.Label>Programs</Form.Label>}
-                {programs.map((program) => {
-                    return <Program key={program.programId} program={program} />;
+            {programs && programs.length > 0 &&
 
-                })}
-            </Form.Group>
+                <Form.Group controlId="formBasicPrograms">
+                    <Form.Label>Programs</Form.Label>
+                    {programs.map((program) => {
+                        return <Program
+                            key={program.applicationId}
+                            program={program}
+                            onEditProgram={handleEditProgram}
+                            onFileUpload={onFileUpload}
+                            onDeleteFile={onDeleteFile}
+                        />;
+
+                    })}
+                </Form.Group>
+            }
 
             <PAdd
                 allPrograms={allPrograms}

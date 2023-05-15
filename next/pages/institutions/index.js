@@ -5,7 +5,7 @@ import ICard from '../../components/cards/ICard';
 
 export default function Institutions({ institutions }) {
   const { user } = useContext(UserContext);
-
+  console.log(institutions);
   return (
     <>
       <Head>
@@ -16,14 +16,13 @@ export default function Institutions({ institutions }) {
       <div className="container pt-4 px-4">
         <h3 className=''>Institutions</h3>
         <p>Showing {institutions.length} results:</p>
-
         <ul className='px-0'>
-          {institutions.map(({ institutionId, name, country, city, logo, programs }, index) => (
+          {institutions.map(({ institutionId, name, country, logo, programs }, index) => (
             <ICard key={`inst-${index}`}
               institutionId={institutionId}
               title={name}
               logo={logo}
-              location={country + ", " + city}
+              location={country}
               programs={programs}
             />
           ))}
