@@ -20,7 +20,7 @@ This will install all the dependencies listed in the `package.json` file.
 - The domain also must be updated
 
 2. Private Key and Certificate:
-- Replace the `private.key` and `certificate.crt` files paths in the same file with your valid private key and certificate files.
+- Replace the private key, certificate and intermediate certificate files paths in the same file with your valid private key and certificate files.
 
 ## Running the Project
 
