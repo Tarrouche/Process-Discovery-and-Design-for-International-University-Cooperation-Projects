@@ -20,6 +20,7 @@ mongosh
 use admin
 
 4. Create a user with the desired username and password:
+
 db.createUser({
   user: "<username>",
   pwd: "<password>",
